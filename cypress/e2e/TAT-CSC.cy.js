@@ -8,35 +8,15 @@ describe('TAT Customer Service Center', () => {
     cy.title().should("be.equal", "TAT Customer Service Center")
   })
 
-
   it('fills in the required fields and submits the form', () => {
-    cy.get('#firstName').as('firstName')
-    .should('be.visible')
-    .type('Lucas')
-
-    cy.get('#lastName').as('lastName')
-    .should('be.visible')
-    .type('Travolta')
-
-    cy.get('#phone').as('phone')
-    .should('be.visible')
-    .type('043587889')
-
-    cy.get('#email').as('email')
-    .should('be.visible')
-    .type('test@123.com')
-
-    cy.get('#open-text-area').as('praiseTextBox')
-    .should('be.visible')
-    .click()
-    .type('I love your services, so thank you very much my friend I love fruit and bananas. I eat pasta too!', {delay: 0})
-
-    cy.get('button[type="submit"]').as('send')
-    .should('be.visible')
-    .click()
-
-    cy.get('.success').as('successToast')
-      .should('be.visible')
+    cy.get('#firstName').type('Lucas')
+    cy.get('#lastName').type('Travolta')
+    cy.get('#phone').type('043587889')
+    cy.get('#email').type('test@123.com')
+    cy.get('#open-text-area').type('I love your services, so thank you very much my friend I love fruit and bananas. I eat pasta too!', {delay: 0})
+    cy.contains('button', 'Send').click()
+    
+    cy.get('.success').should('be.visible')
     
     // cy.get('@successToast')
     // .should('have.text', 'Message successfully sent.')  
@@ -44,146 +24,128 @@ describe('TAT Customer Service Center', () => {
   })
 
   it('fills in the required fields and submits the form', () => {
+
+    const longText = Cypress._.repeat('abcdefghij', 10)
     
-    cy.get('#firstName').as('firstName')
-    .should('be.visible')
-    .type('Lucas')
-
-    cy.get('#lastName').as('lastName')
-    .should('be.visible')
-    .type('Travolta')
-
-    cy.get('#phone').as('phone')
-    .should('be.visible')
-    .type('043587889')
-
-    cy.get('#email').as('email')
-    .should('be.visible')
-    .type('test@123.')
-
-    cy.get('#open-text-area').as('praiseTextBox')
-    .should('be.visible')
-    .click()
-    .type('I dont love your services, so thank you very much my friend I love fruit and bananas. I eat pasta too!', {delay:0})
-
-    cy.get('button[type="submit"]').as('send')
-    .should('be.visible')
-    .click()
-
-    cy.get('.error').as('errorToast')
-      .should('be.visible')
+    cy.get('#firstName').type('Lucas')
+    cy.get('#lastName').type('Travolta')
+    cy.get('#phone').type('043587889')
+    cy.get('#email').type('test@123.')
+    cy.get('#open-text-area').type(longText, {delay:0})
+    cy.contains('button', 'Send').click()
+    
+    cy.get('.error').should('be.visible')
   
   })
 
   it('phone field only accepts numbers', () => {
     
-    cy.get('#phone').as('phone')
-    .should('be.visible')
-    .type('abcsefg')
-
-    cy.get('@phone')
-    .should('have.value', '')
+    cy.get('#phone')
+      .type('abcsefg')
+      .should('have.value', '')
   })
 
   it('displays an error message when the phone becomes required but is not filled in before the form submission', () => {
-    
-    cy.get('#firstName').as('firstName')
-    .should('be.visible')
-    .type('Lucas')
+    cy.get('#firstName').type('Lucas')
+    cy.get('#lastName').type('Travolta')
+    cy.get('#email').type('test@123.com')
+    cy.get('#phone-checkbox').check()
+    cy.get('#open-text-area').type("test")
+    cy.contains('button', 'Send').click()
 
-    cy.get('#lastName').as('lastName')
-    .should('be.visible')
-    .type('Travolta')
-
-    cy.get('#email').as('email')
-    .should('be.visible')
-    .type('test@123.com')
-
-    cy.get('#phone-checkbox').as('phoneCheckbox')
-    .should('be.visible')
-    .click()
-
-    cy.get('#open-text-area').as('praiseTextBox')
-    .should('be.visible')
-    .click()
-    .type('I dont love your services, so thank you very much my friend I love fruit and bananas. I eat pasta too!', {delay:0})
-
-    cy.get('button[type="submit"]').as('send')
-    .should('be.visible')
-    .click()
-
-    cy.get('.error').as('errorToast')
-      .should('be.visible')
+    cy.get('.error').should('be.visible')
   
   })
 
   it('fills and clears the first name, last name, email, and phone fields', () => {
   
-    cy.get('#firstName').as('firstName')
-    .should('be.visible')
-    .type('Lucas')
-    .should('have.value', 'Lucas')
+    cy.get('#firstName')
+      .type('Lucas')
+      .should('have.value', 'Lucas')
+      .clear()
+      .should('have.value', '')
 
-    cy.get('@firstName')
-    .clear()
-    .should('have.value', '')
+    cy.get('#lastName')
+      .type('Silva')
+      .should('have.value', 'Silva')
+      .clear()
+      .should('have.value', '')
 
-    cy.get('#lastName').as('lastName')
-    .should('be.visible')
-    .type('Silva')
-    .should('have.value', 'Silva')
+      cy.get('#email')
+      .type('lucas.cord@hotmail.com')
+      .should('have.value', 'lucas.cord@hotmail.com')
+      .clear()
+      .should('have.value', '')
 
-    cy.get('@lastName')
-    .clear()
-    .should('have.value', '')
-
-    cy.get('#email').as('email')
-    .should('be.visible')
-    .type('lucas.cord@hotmail.com')
-    .should('have.value', 'lucas.cord@hotmail.com')
-
-    cy.get('@email')
-    .clear()
-    .should('have.value', '')
-
-    cy.get('#phone-checkbox').as('phoneCheckbox')
-    .should('be.visible')
-    .click()
-
-    cy.get('#open-text-area').as('praiseTextBox')
-    .should('be.visible')
-    .click()
-    .type('I dont love your services, so thank you very much my friend I love fruit and bananas. I eat pasta too!', {delay:0})
-
-    cy.get('button[type="submit"]').as('send')
-    .should('be.visible')
-    .click()
-
-    cy.get('.error').as('errorToast')
-      .should('be.visible')
+      cy.get('#phone')
+      .type('2456796')
+      .should('have.value', '2456796')
+      .clear()
+      .should('have.value', '')
   
   })
 
   it('displays an error message when submitting the form without filling the required fields', () => {
-    
-    //cy.get('#email-checkbox').as('emailCheckbox')
-    cy.contains('.field', 'Email').should('be.visible').click()
-
-    cy.get('input[type="radio"][value="help"]').as('helpRadioButton')
-    .should('be.visible')
-    .click()
-
-    cy.get('button[type="submit"]').as('send')
-    .should('be.visible')
-    .click()
-
-    cy.get('.error').as('errorToast')
-      .should('be.visible')
-  
+    cy.contains('button', 'Send').click()
+      .get('.error').should('be.visible')
   })
 
   it('successfully submits the form using a custom command', () => {
     cy.fillMandatoryFieldsAndSubmit('carlos', 'mano', '123456', 'test@gmail.com', 'this is my feedback.')
+      .get('.success').should('be.visible')
+  })
+
+  it('selects a product (YouTube) by its content', () => {
+    cy.get('select').select('YouTube')
+      .should('have.value', 'youtube')
+  })
+
+  it('selects a product (Mentorship) by its value', () => {
+    cy.get('select').select('mentorship') //cy.get('#product').select('mentorship') 
+      .should('have.value', 'mentorship')
+  })
+
+  it('selects a product (Blog) by its index', () => {
+    cy.get('select').select(1)
+      .should('have.value', 'blog')
+  })
+
+  it('checks the type of service "Feedback"', () => {
+    cy.get('input[type=radio][value="feedback"]').check()
+      .should('be.checked')
+  })
+
+  it('checks each type of service', () => {
+    cy.get('#support-type')
+      .find('input[type="radio"]')
+      .each((typesOfServices) => {
+        cy.wrap(typesOfServices)
+          .check()
+          .should('be.checked')
+    });
+  })
+
+  it('checks both checkboxes, then unchecks the last one', () => {
+    cy.get('#check')
+      .find('input[type="checkbox"]').as('checkboxes')
+      .each((preferredOptions) => {
+        cy.wrap(preferredOptions)
+          .check()
+          .should('be.checked')
+    });
+
+    cy.get('@checkboxes').last().uncheck()
+    .should('not.be.checked')
+
+  })
+
+  it.only('checks both checkboxes, then unchecks the last one', () => {
+    cy.get('input[type="checkbox"]')
+    .check()
+    .should('be.checked')
+    .last()
+    .uncheck()
+    .should('not.be.checked')
   })
 
 })

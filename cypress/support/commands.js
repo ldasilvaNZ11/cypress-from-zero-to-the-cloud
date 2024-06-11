@@ -25,31 +25,26 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('fillMandatoryFieldsAndSubmit', (name, surname, phoneNumber, email, praiseTextBox) => {{
-    cy.get('#firstName').as('firstName')
-    .should('be.visible')
-    .type(name)
+  cy.get('#firstName').type(name)
+  cy.get('#lastName').type(surname)
+  cy.get('#phone').type('043587889')
+  cy.get('#email').type(email)
+  cy.get('#phone-checkbox').click()
+  cy.get('#open-text-area').type("test")
+  cy.contains('button', 'Send').click()
 
-    cy.get('#lastName').as('lastName')
-    .should('be.visible')
-    .type(surname)
-
-    cy.get('#phone').as('phone')
-    .should('be.visible')
-    .type(phoneNumber)
-
-    cy.get('#email').as('email')
-    .should('be.visible')
-    .type(email)
-
-    cy.get('#open-text-area').as('praiseTextBox')
-    .should('be.visible')
-    .click()
-    .type(praiseTextBox, {delay:0})
-
-    cy.get('button[type="submit"]').as('send')
-    .should('be.visible')
-    .click()
-
-    cy.get('.success').as('successToast')
-      .should('be.visible')
 }})
+
+Cypress.Commands.add('fillMandatoryFieldsAndSubmitUsingObject', (data = {
+  firstName: 'Lucas',
+  lastName: 'Silva',
+  email: 'lucas@test.co.nz',
+  text: 'test'
+}) => {
+  cy.get('#firstName').type(data.name)
+  cy.get('#lastName').type(data.surname)
+  cy.get('#phone').type(data.phoneNumber)
+  cy.get('#open-text-area').type(text)
+  cy.contains('button', 'Send').click()
+
+})
