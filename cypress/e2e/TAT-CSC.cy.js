@@ -50,6 +50,7 @@ describe('TAT Customer Service Center', () => {
     cy.get('#lastName').type('Travolta')
     cy.get('#email').type('test@123.com')
     cy.get('#phone-checkbox').check()
+    cy.get('#phone-checkbox').check()
     cy.get('#open-text-area').type("test")
     cy.contains('button', 'Send').click()
 
@@ -139,13 +140,41 @@ describe('TAT Customer Service Center', () => {
 
   })
 
-  it.only('checks both checkboxes, then unchecks the last one', () => {
-    cy.get('input[type="checkbox"]')
-    .check()
-    .should('be.checked')
-    .last()
-    .uncheck()
-    .should('not.be.checked')
+  // different solution from mine
+  // it.only('checks both checkboxes, then unchecks the last one', () => {
+  //   cy.get('input[type="checkbox"]')
+  //   .check()
+  //   .should('be.checked')
+  //   .last()
+  //   .uncheck()
+  //   .should('not.be.checked')
+  // })
+
+  it('selects a file from the fixtures folder', () => {
+    cy.get('input[type="file"]')
+      .selectFile('cypress/fixtures/example.json')
+      .should(input => {
+       //console.log(input)
+        expect(input[0].files[0].name).to.equal('example.json')
+      })
   })
+
+  it('selects a file simulating a drag-and-drop', () => {
+    cy.get('input[type="file"]')
+      .selectFile('cypress/fixtures/example.json',{ action: 'drag-drop' })
+      .should(input => {
+        expect(input[0].files[0].name).to.equal('example.json')
+      })
+  })
+
+
+  it.only('selects a file using a fixture to which an alias was given', () => {
+      cy.fixture('example.json', null).as('sampleFile')
+      cy.get('input[type=file]').selectFile('@sampleFile')
+      .should(input => {
+        expect(input[0].files[0].name).to.equal('example.json')
+      })
+  })
+
 
 })
