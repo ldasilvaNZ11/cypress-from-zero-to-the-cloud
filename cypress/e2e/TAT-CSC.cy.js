@@ -168,7 +168,7 @@ describe('TAT Customer Service Center', () => {
   })
 
 
-  it.only('selects a file using a fixture to which an alias was given', () => {
+  it('selects a file using a fixture to which an alias was given', () => {
       cy.fixture('example.json', null).as('sampleFile')
       cy.get('input[type=file]').selectFile('@sampleFile')
       .should(input => {
@@ -176,5 +176,17 @@ describe('TAT Customer Service Center', () => {
       })
   })
 
+  it('verifies that the privacy policy page opens in another tab without the need for a click', () => {
+    cy.contains('a', 'Privacy Policy')
+      .should('have.attr', 'href', 'privacy.html')
+      .and('have.attr', 'target', '_blank')
+  })
 
+  it.only('access the privacy policy page by removing the target, then clicking on the link.', () => {
+    cy.contains('a', 'Privacy Policy')
+      .invoke('removeAttr', 'target') // Would be good to know why invoke is necessary here, rather than just removing this line and letting Privacy Policy to be clicked
+      .click()
+   
+    cy.contains('h1', 'TAT CSC - Privacy Policy').should('be.visible')
+  })
 })
