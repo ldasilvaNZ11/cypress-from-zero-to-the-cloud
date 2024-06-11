@@ -182,7 +182,7 @@ describe('TAT Customer Service Center', () => {
       .and('have.attr', 'target', '_blank')
   })
 
-  it.only('access the privacy policy page by removing the target, then clicking on the link.', () => {
+  it('access the privacy policy page by removing the target, then clicking on the link.', () => {
     cy.contains('a', 'Privacy Policy')
       .invoke('removeAttr', 'target') // Would be good to know why invoke is necessary here, rather than just removing this line and letting Privacy Policy to be clicked
       .click()
