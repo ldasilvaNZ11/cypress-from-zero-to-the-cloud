@@ -9,15 +9,21 @@ describe('TAT Customer Service Center', () => {
   })
 
   it('fills in the required fields and submits the form', () => {
+    cy.clock(3000)
     cy.get('#firstName').type('Lucas')
     cy.get('#lastName').type('Travolta')
     cy.get('#phone').type('043587889')
     cy.get('#email').type('test@123.com')
-    cy.get('#open-text-area').type('I love your services, so thank you very much my friend I love fruit and bananas. I eat pasta too!', {delay: 0})
+    cy.get('#open-text-area').type('I love your services, so thank you very much my friend I love fruit and bananas. I eat pasta too!', { delay: 0 })
     cy.contains('button', 'Send').click()
-    
+
     cy.get('.success').should('be.visible')
-    
+
+    cy.tick(3000)
+
+    cy.get('.success').should('not.be.visible')
+
+
     // cy.get('@successToast')
     // .should('have.text', 'Message successfully sent.')  
 
@@ -26,20 +32,20 @@ describe('TAT Customer Service Center', () => {
   it('fills in the required fields and submits the form', () => {
 
     const longText = Cypress._.repeat('abcdefghij', 10)
-    
+
     cy.get('#firstName').type('Lucas')
     cy.get('#lastName').type('Travolta')
     cy.get('#phone').type('043587889')
     cy.get('#email').type('test@123.')
-    cy.get('#open-text-area').type(longText, {delay:0})
+    cy.get('#open-text-area').type(longText, { delay: 0 })
     cy.contains('button', 'Send').click()
-    
+
     cy.get('.error').should('be.visible')
-  
+
   })
 
   it('phone field only accepts numbers', () => {
-    
+
     cy.get('#phone')
       .type('abcsefg')
       .should('have.value', '')
@@ -55,11 +61,11 @@ describe('TAT Customer Service Center', () => {
     cy.contains('button', 'Send').click()
 
     cy.get('.error').should('be.visible')
-  
+
   })
 
   it('fills and clears the first name, last name, email, and phone fields', () => {
-  
+
     cy.get('#firstName')
       .type('Lucas')
       .should('have.value', 'Lucas')
@@ -72,18 +78,18 @@ describe('TAT Customer Service Center', () => {
       .clear()
       .should('have.value', '')
 
-      cy.get('#email')
+    cy.get('#email')
       .type('lucas.cord@hotmail.com')
       .should('have.value', 'lucas.cord@hotmail.com')
       .clear()
       .should('have.value', '')
 
-      cy.get('#phone')
+    cy.get('#phone')
       .type('2456796')
       .should('have.value', '2456796')
       .clear()
       .should('have.value', '')
-  
+
   })
 
   it('displays an error message when submitting the form without filling the required fields', () => {
@@ -123,7 +129,7 @@ describe('TAT Customer Service Center', () => {
         cy.wrap(typesOfServices)
           .check()
           .should('be.checked')
-    });
+      });
   })
 
   it('checks both checkboxes, then unchecks the last one', () => {
@@ -133,10 +139,10 @@ describe('TAT Customer Service Center', () => {
         cy.wrap(preferredOptions)
           .check()
           .should('be.checked')
-    });
+      });
 
     cy.get('@checkboxes').last().uncheck()
-    .should('not.be.checked')
+      .should('not.be.checked')
 
   })
 
@@ -154,14 +160,14 @@ describe('TAT Customer Service Center', () => {
     cy.get('input[type="file"]')
       .selectFile('cypress/fixtures/example.json')
       .should(input => {
-       //console.log(input)
+        //console.log(input)
         expect(input[0].files[0].name).to.equal('example.json')
       })
   })
 
   it('selects a file simulating a drag-and-drop', () => {
     cy.get('input[type="file"]')
-      .selectFile('cypress/fixtures/example.json',{ action: 'drag-drop' })
+      .selectFile('cypress/fixtures/example.json', { action: 'drag-drop' })
       .should(input => {
         expect(input[0].files[0].name).to.equal('example.json')
       })
@@ -169,8 +175,8 @@ describe('TAT Customer Service Center', () => {
 
 
   it('selects a file using a fixture to which an alias was given', () => {
-      cy.fixture('example.json', null).as('sampleFile')
-      cy.get('input[type=file]').selectFile('@sampleFile')
+    cy.fixture('example.json', null).as('sampleFile')
+    cy.get('input[type=file]').selectFile('@sampleFile')
       .should(input => {
         expect(input[0].files[0].name).to.equal('example.json')
       })
@@ -186,11 +192,57 @@ describe('TAT Customer Service Center', () => {
     cy.contains('a', 'Privacy Policy')
       .invoke('removeAttr', 'target') // Would be good to know why invoke is necessary here, rather than just removing this line and letting Privacy Policy to be clicked
       .click()
-   
+
     cy.contains('h1', 'TAT CSC - Privacy Policy').should('be.visible')
   })
 
-  // it('', () => {
+  it('displays and hides the success and error messages using .invoke', () => {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Message successfully sent.')
+      .invoke('hide')
+      .should('not.be.visible')
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Validate the required fields!')
+      .invoke('hide')
+      .should('not.be.visible')
+  })
 
-  // })
+  it('fills in the text area field using the invoke command', () => {
+    cy.get('#open-text-area')
+      .invoke('val', 'some text')
+      .should('have.value', 'some text')
+  })
+
+  it('makes an HTTP request Walmyrs example', () => {
+    cy.request('https://tat-csc.s3.sa-east-1.amazonaws.com/index.html')
+      .as('getRequest')
+      .its('status')
+      .should('be.equal', 200)
+    cy.get('@getRequest')
+      .its('statusText')
+      .should('be.equal', 'OK')
+    cy.get('@getRequest')
+      .its('body')
+      .should('include', 'TAT CSC')
+  })
+
+  it('makes an HTTP request', () => {
+    cy.request('GET', 'https://tat-csc.s3.sa-east-1.amazonaws.com/index.html')
+      .then((response) => {
+        expect(response.status).to.eq(200)
+      })
+  })
+
+  it.only('find the cat challenge', () => {
+    cy.get('#cat')
+    .should('not.be.visible')
+    .invoke('show')
+    .should('be.visible')
+  })
 })

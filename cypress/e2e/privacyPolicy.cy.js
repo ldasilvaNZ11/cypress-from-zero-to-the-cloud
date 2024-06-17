@@ -1,7 +1,10 @@
 
-it.only('independently test the privacy policy page', () => {
-    cy.visit('./src/privacy.html') 
+Cypress._.times(3, () => {
+    it.only('independently test the privacy policy page', () => {
+        cy.visit('./src/privacy.html')
 
-    cy.contains('h1', 'TAT CSC - Privacy Policy').should('be.visible')
-    cy.contains('p', 'Talking About Testing').should('be.visible')
+        cy.contains('h1', 'TAT CSC - Privacy Policy').should('be.visible')
+        cy.contains('p', 'Talking About Testing').should('be.visible')
+    })
+
 })
